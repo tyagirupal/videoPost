@@ -1,0 +1,57 @@
+.Container{
+    width: 100%;
+    height: calc(100vh - 70px);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+    box-sizing: border-box;
+    .leftSide{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+        max-width: 100%;
+        width: 60%;
+        .mainVideo{
+            height: 65%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            .videoSection{
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                width: 100%;
+                height: 10%;
+                padding: 8px;
+                .like{
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    padding: 5px;
+                    border-radius: 30px;
+                    background-color: #a9a9a9;
+                    padding-inline: 15px;
+                    cursor: pointer;
+                   
+                }
+            }
+        }
+        .commentSection{
+            height: 35%;
+            overflow-y: scroll;
+            width: 100%;
+        }
+    }
+    .rightSide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        max-width: 100%;
+        width: 35%;
+    }
+}

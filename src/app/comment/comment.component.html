@@ -1,0 +1,50 @@
+<div class="commentConatiner">
+
+    <div class="userComment" >
+        <div class="userImage" >
+            <div class="circle">
+                R
+            </div>
+        </div>
+        <div class="commentDetails">
+            <div class="upper">
+                <form [formGroup]="formGroup" >
+                    <mat-form-field style="width: 100%;" >
+                        <mat-label>Leave a comment</mat-label>
+                        <input (focus)="activeCommentBox()" required matInput formControlName="Comment" placeholder="Type something...">
+                      </mat-form-field>
+                </form>  
+            </div>
+            <div class="bottom"  *ngIf="isCommentBoxActive">
+                <div class="buttons">
+                    <button (click)="cancel()"  style="background-color:#1799a5; border-radius: 15px;" mat-flat-button>Cancel</button>
+                    <button (click)="pushData(formGroup)" [disabled]="!formGroup.valid" mat-flat-button style="background-color:#1799a5; border-radius: 15px;">Comment</button>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    <div class="singleComment" *ngFor="let data of data.reverse()">
+        <div class="userImage">
+            <div class="circle">
+                {{data.name}}
+
+            </div>
+        </div>
+        <div class="commentDetails">
+            <div class="upper">
+              <div class="userName">
+                {{data.userName}}
+              </div>
+              <div class="commentTime">
+
+              </div>
+            </div>
+            <div class="commentData">
+                {{data.Comment}}
+            </div>
+        </div>
+
+    </div>
+
+</div>

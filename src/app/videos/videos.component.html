@@ -1,0 +1,13 @@
+<div class="videos">
+    <div class="videoCard" *ngFor="let data of videoData" (click)="navigateToSingleVideo()">
+        <div class="thumbnail">
+            <img style="height: 100%; width: 100%; border-radius: 10px; cursor: pointer;" [src]="data.img" alt="">
+        </div>
+        <div class="thumbnailData">
+            <h3 style="font-size: 23px;">Exploring Beauty's of Nature</h3>
+            <mat-icon >play_circle_outline</mat-icon>
+            <h3 style="font-size: 17px;">This Video Show You The Beauty Of Nature</h3>
+        </div>
+    </div>
+
+</div>

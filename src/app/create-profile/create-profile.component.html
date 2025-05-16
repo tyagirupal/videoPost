@@ -1,0 +1,77 @@
+
+<div class="containerTwo">
+    <div class="left">
+        <div class="insidLeft">
+            <h1>Create Your Profile</h1>
+            <p>Let's start your wonderful journey with us</p>
+            
+            <div class="profileData" *ngFor="let data of profile">
+              
+                <input *ngIf="data.type === 'text' || data.type === 'file'" 
+                       [type]="data.type" 
+                       [placeholder]="data.placeholder" 
+                       class="form-control">
+                <mat-form-field *ngIf="data.type === 'select'" class="Select">
+                    <mat-label>{{ data.placeholder }}</mat-label>
+                    <mat-select>
+                        <mat-option *ngFor="let option of data.option" 
+                                    [value]="option.value">
+                            {{ option.count }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+        </div>
+    </div>
+    <div class="right">
+        <div class="insidRight" >
+        <div class="rightUp">
+            <div class="Image" style="height: 50%; width: 50%;">
+                <img height="100%" width="100%"   src="https://static.vecteezy.com/system/resources/previews/019/879/186/original/user-icon-on-transparent-background-free-png.png" alt="">
+            </div>
+            <div class="details">
+                <div>{{storedData.name}}</div>
+            </div>
+        </div>
+        
+            <div class="rightDown" >
+                    <div class="rightDownLeft " >
+                        <div  *ngIf="storedEntries.length > 0" class="insideRigghtDown">
+                            <div *ngFor="let entry of storedEntries"class="d-flex entryData" >
+                                <div>
+                                    <p>{{ entry[0] }}:</p>
+                                </div>
+                                <div>
+
+                                    <p>{{ entry[1] }}</p>
+                                </div>
+                              </div>
+                          
+
+                        </div>
+                        <!-- {{receivedProfileData.name}} -->
+                    </div>
+                    <!-- <div class="rightDownRight ">
+                        <div class="insideRightDown">
+                            <p> {{storedData.name}}</p>
+                           
+                          
+                            <p>{{storedData.email}}</p>
+                            <p>{{storedData.country}}</p>
+                            <p>{{storedData.address}}</p>
+
+                        </div>
+                    </div> -->
+                    <!-- <div *ngIf="storedEntries.length > 0">
+                        <h3>Stored Profile Data</h3>
+                        <div *ngFor="let entry of storedEntries" class="d-flex">
+                          <strong>{{ entry[0] }}:</strong> <p>{{ entry[1] }}</p>
+                        </div>
+                      </div> -->
+
+            </div>
+        </div>
+
+    </div>
+</div>

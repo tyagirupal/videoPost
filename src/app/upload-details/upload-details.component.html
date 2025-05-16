@@ -1,0 +1,83 @@
+
+<div>
+    <div id="top" *ngIf="!uploaded">
+        <div class="body">
+            <div class="outerCircle">
+                <div class="uploadCircle" id="uploadCircle">
+                    <div class="uploadText">
+                        <div style="font-size: 24px;">
+                            Click to upload your video <br> OR <br> Drag & Drop your video files here to upload
+                        </div>
+                    </div>
+                    <input type="file" accept="video/mp4,video/mov" (change)="captureThumbnails($event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div id="down" *ngIf="uploaded">
+        <!-- <div class="Upload">
+            <div class="insideUpload">
+                <div class="left">
+                    <div class="leftLeft">
+                            <video *ngIf="base64Video" [attr.src]="base64Video" controls  width="400"></video>
+
+                            
+                    </div>
+                </div>
+                <div class="Right">
+                    <div class="videoData">
+                        <form [formGroup]="formGroup">
+                            <div class="formGroup" *ngFor="let data of formGroupData">
+                                <label>{{ data.label }}</label>
+                                <input [type]="data.type" [placeholder]="data.placeholder">
+                            </div>
+    
+                            <h3>Generated Thumbnails</h3>
+                            <div *ngIf="thumbnails.length > 0" style="display: flex; gap: 10px;">
+                                <img *ngFor="let thumb of thumbnails" [src]="thumb" style="width: 150px; height: 100px;" />
+                            </div>
+                        </form>
+                        <button (click)="submit()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="body">
+            <div class="container">
+                <div class="left">
+                    <div class="videoContainer">
+                        <video style="height: 100%; width: 100%;" *ngIf="base64Video" [attr.src]="base64Video" controls  width="400"></video>
+                    </div>
+
+                </div>
+                <div class="right">
+                    <div class="VideoData">
+                        <form [formGroup]="formGroup">
+                            <div class="formGroup" *ngFor="let data of formGroupData">
+                                <label>{{ data.label }}</label>
+                                <input [type]="data.type" [placeholder]="data.placeholder">
+                            </div>
+    
+                            <h3>Generated Thumbnails</h3>
+                            <div *ngIf="thumbnails.length > 0" class="thumbnailsData">
+                                <img *ngFor="let thumb of thumbnails" [src]="thumb" style="width: 150px; height: 100px;" />
+                            </div>
+                        </form>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+

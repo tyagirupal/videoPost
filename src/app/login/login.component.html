@@ -1,0 +1,61 @@
+<div class="flip-box">
+    <div class=" d-flex " class="container" [ngClass]="{'flipped' : !signIn}" [formGroup]="form" >
+        <div class="signUpDiv d-flex" *ngIf="!signIn">
+            <div class="left">
+                <img src="https://pankaj-practice.netlify.app/assets/loginLogo.jpeg" alt="">
+            </div>
+            <div class="right">
+                <p  style="font-size: 14px; color: grey; margin-left: 7rem;">Have an account? <a (click)="toggleForm()" style="color: aqua; cursor: pointer;">Sign In</a></p>
+                <h1 >Sign Up</h1>
+                <p style="font-size: 13px;color: gray;">Let's start your wonderful journey with us</p>
+                <form class="mb-3" *ngFor="let data of formData" [formGroup]="form" >
+                    <input [type]="data.type"  [ngClass]="{'bg-grey': data.class === 'grey'}"  class="form-control"  [formControlName]="data.controlName" [placeholder]="data.placeholder">
+                    <div class="red" *ngIf="form.get(data.controlName)?.touched && form.get(data.controlName)?.errors?.['required']">
+                        This field is required.
+                    </div>
+                </form>
+                <div class="form-check d-flex">
+                    <mat-checkbox class="example-margin"></mat-checkbox>
+                    <label class="form-check-label" for="flexCheckChecked">
+                        By Sign up. I agree to the term and conditions and privacy policy.
+                    </label>
+                </div>
+                <button (click)="onSubmit()" type="button" [disabled]="form.invalid"
+                style="width: 100%;background-color: aqua; border-radius: 10px;" class="btn btn-primary ">Sign up</button>
+            </div>
+        </div>
+        <div class="signInDiv d-flex" [formGroup]="form" *ngIf="signIn">
+            <div class="left">
+                <img src="https://pankaj-practice.netlify.app/assets/loginLogo.jpeg" alt="">
+            </div>
+            <div class="right">
+                <p  style="font-size: 14px; color: grey; margin-left: 7rem;">Don't have an account? <a (click)="toggleForm()"  style="color: aqua; cursor: pointer;">Sign Up</a></p>
+                <h1>Sign In</h1>
+                <p style="font-size: 13px;color: gray;">Let's start your wonderful journey with us</p>
+                <form class="mb-3" *ngFor="let data of signInData" [formGroup]="signInForm">
+                    <input [type]="data.type"  class="form-control"id="exampleFormControlInput1" [placeholder]="data.placeholder">
+                </form>
+                
+                <button (click)="onSubmit()" type="button" [disabled]="form.invalid"
+                style="width: 100%;background-color: aqua; border-radius: 10px;" class="btn btn-primary ">Sign In</button>
+            </div>
+        
+        </div>
+
+    </div>
+</div>
+
+
+<!-- <div id="card" class="card" >
+    <button (click)=>click to flipped</button>
+    <div class="frontt">
+        <p>Lorem ipsum dolor sit amet.</p>
+       <span>Lorem ipsum dolor sit amet consectetur.</span>
+    </div>
+    <div class="back">
+        <p>Lorem ipsum dolor sit amet.</p>
+        <span>Lorem ipsum dolor sit amet consectetur.</span>
+    </div>
+</div> -->
+
+

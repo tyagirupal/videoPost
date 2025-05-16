@@ -1,0 +1,20 @@
+<app-navbar></app-navbar>
+<div class="body">
+    <div class="outerCircle">
+        <div class="uploadCircle" id="uploadCircle" >
+            <div class="uploadText" >
+                <div style="font-size: 24px;">Click to upload your video <br>
+                    OR <br>
+                    Drag & Drop your video files here to upload</div>
+            </div>
+            <!-- <input type="file" id="Input" accept="video/mp4,video/mov"  (change)="convertToBase64($event)"> -->
+            <input type="file" accept="video/mp4,video/mov" (change)="convertToBase64($event)">
+
+            <!-- <app-upload-details *ngIf="base64Video" [videoData]="base64Video"></app-upload-details> -->
+
+        </div>
+    </div>
+    <div class="videoDetails">
+
+    </div>
+</div>

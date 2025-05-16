@@ -1,0 +1,50 @@
+
+<div class="body">
+    <div class="container-fluid">
+        <div class="sidebar">
+            <div class="searchTop">
+                <input type="search" name="" id="">
+                <button>serach</button>
+            </div>
+            <div class="filters">
+                <div class="singleFilter" *ngFor="let data of filterData">
+                    <div class="heading">
+                        {{data.heading}}
+                    </div>
+                    <div class="filtersGroup" *ngFor="let inside of data.checkdata">
+                        <div class="formGroup">
+                            <label>{{inside.label}}</label>
+                            <mat-checkbox style="border-color: white;"></mat-checkbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="right">
+            <div class="topFilters">
+                <div class="AppliedFilters" *ngFor="let data of filterNav">
+                    <div class="filterHeading">{{data.head}}</div>
+                    <div class="selectedFilters">
+                        <mat-chip>One </mat-chip>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div class="newFilterButtons">
+                <div class="newButton">Latest</div>
+                <div class="selectedNewButton">Popular</div>
+                <div class="newButton">Trending</div>
+
+            </div>
+            <div class="rightContent">
+                <app-videos></app-videos>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

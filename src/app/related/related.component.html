@@ -1,0 +1,18 @@
+<div class="body">
+    <div class="videoContainer">
+        <div class="singleVideo " *ngFor="let data of videoData">
+            <div class="left"> 
+                <img style="width: 100%; height: 100%;" [src]="data.img" alt="">
+            </div>
+            <div class="right"  >
+                <div class="title">{{data.dataOne}}</div>
+                <div class="description">{{data.dataTwo}}</div>
+                <div class="uploadedBy">{{data.dataThree}}</div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
