@@ -3,109 +3,80 @@ import { Router } from '@angular/router';
 import { EventEmitter } from '@angular/core';
 import { LoginProfileService } from '../login-profile.service';
 
+interface NavItem {
+  data: string;
+  link: string;
+  isLoggedIn: boolean;
+}
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-
-
-  show=false;
-  mobile:boolean=false;
   public loginEmitter = new EventEmitter();
+  isLoggedIn = false;
 
-  lap:boolean=false;
-  isLoggedIn:boolean=false;
-  // isLoggedIn = !!localStorage.getItem('form');
-
-  navData: any[] = [
-    { data: 'Login', link: 'login', isLoggedIn:true },
-    { data: 'Upload', link: 'upload-details', isLoggedIn:false },
-    { data: 'Create Profile', link: 'create', isLoggedIn:true  },
-    { data: 'FunnyBone', link: 'bone',isLoggedIn:true   },
-    { data: 'Shop', link: 'shop', isLoggedIn:true  },
-    { data: 'Cart', link: 'cart',isLoggedIn:true  },
-    { data: 'Review Catalogue', link: 'review-catalogue',isLoggedIn:true  },
-    { data: 'Log Out', link: 'images',isLoggedIn:false  },
+  navData: NavItem[] = [
+    { data: 'Login',              link: 'login',             isLoggedIn: true  },
+    { data: 'Upload',             link: 'upload-details',    isLoggedIn: false },
+    { data: 'Create Profile',     link: 'create',            isLoggedIn: true  },
+    { data: 'FunnyBone',          link: 'bone',              isLoggedIn: true  },
+    { data: 'Shop',               link: 'shop',              isLoggedIn: true  },
+    { data: 'Cart',               link: 'cart',              isLoggedIn: true  },
+    { data: 'Review Catalogue',   link: 'review-catalogue',  isLoggedIn: true  },
+    { data: 'Log Out',            link: '',                  isLoggedIn: false },
   ];
 
-  constructor(private router :Router, private loginService : LoginProfileService) { 
-    if(!localStorage.getItem('form')){
-
-    }else{
-      this.navData = this.navData.map((data)=>{
-        data.data == 'Login' ? data.isLoggedIn = false : data.isLoggedIn = true;
-        return data
-      })
-    }
-   
+  constructor(
+    private router: Router,
+    private loginService: LoginProfileService
+  ) {
+    this.isLoggedIn = this.checkLoginStatus();
+    this.applyVisibility(this.isLoggedIn);
   }
 
   ngOnInit(): void {
-    // this.hideLi();
-
-    this.loginService.loggedIn.subscribe((data)=>{
-      console.log(data);
-      if(data){
-          this.navData = this.navData.map((item)=>{
-          item.data == 'Login' ? item.isLoggedIn = false : item.isLoggedIn = true;
-          return item;
-        })
-      }
-        else{
-          this.navData = this.navData.map((item)=>{
-          item.data == 'Login' ? item.isLoggedIn = true : item.isLoggedIn = false;
-          return item;
-        })
-      }
-
-  })
-}
-
-  checkLoginStatus() :boolean{
-    console.log("dfghjk");
-    
-   return  !!localStorage.getItem('form');
+    // React to login status changes broadcasted by your service
+    this.loginService.loggedIn.subscribe((flag) => {
+      this.isLoggedIn = !!flag;
+      this.applyVisibility(this.isLoggedIn);
+    });
   }
 
-  logout() {
-    console.log("fdghjk");
-    
+  private applyVisibility(logged: boolean): void {
+    this.navData = this.navData.map((item) => {
+      if (item.data === 'Login') {
+        item.isLoggedIn = !logged;     // show Login if not logged
+      } else if (item.data === 'Log Out') {
+        item.isLoggedIn = logged;      // show Log Out if logged
+      } else {
+        item.isLoggedIn = true;        // other links always visible (or choose your logic)
+      }
+      return item;
+    });
+  }
+
+  checkLoginStatus(): boolean {
+    return !!localStorage.getItem('form');
+  }
+
+  isLoginVisible(): boolean {
+    return this.navData.find((n) => n.data === 'Login')?.isLoggedIn ?? true;
+  }
+
+  logout(): void {
     localStorage.removeItem('form');
     this.loginEmitter.emit(false);
-    this.loginService.loggedIn.emit(false)
-    this.router.navigate([`/images`]);
+    this.loginService.loggedIn.emit(false);
+    this.router.navigate(['/images']); // your existing behavior
   }
 
-  navigateToCart(route) {
-    console.log(route);
-    
-    this.router.navigate([`/${route}`]);
+  navigateTo(route: string): void {
+    if (!route) return;
+    this.router.navigate(['/', route]);
   }
 
-  // hideLi(){
-  //   console.log("dfghjk");
-
-  //   const isLoggedIn = true;
-  //           const dashboardLink = document.getElementById('dashboard-link');
-  //           const loginLink = document.getElementById('login-link');
-  //           if (isLoggedIn) {
-  //               dashboardLink.style.display = 'none';
-  //               loginLink.style.display = 'block';
-  //           } else {
-  //               dashboardLink.style.display = 'block';
-  //               loginLink.style.display = 'none';
-  //           }
-
-  // }
-
-  showNav(){
-    this.show =!this.show;
-  }
-
-  hideNav(){
-    this.show=false;
-  }
+  trackByLabel = (_: number, item: NavItem) => item.data;
 }

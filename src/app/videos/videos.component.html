@@ -1,13 +1,19 @@
-<div class="videos">
-    <div class="videoCard" *ngFor="let data of videoData" (click)="navigateToSingleVideo()">
-        <div class="thumbnail">
-            <img style="height: 100%; width: 100%; border-radius: 10px; cursor: pointer;" [src]="data.img" alt="">
+<div class="container-fluid videos-grid py-3">
+  <div class="row g-3">
+    <div
+      class="col-6 col-sm-4 col-md-3 col-lg-3"
+      *ngFor="let v of videoData; trackBy: trackByImg"
+    >
+      <mat-card class="video-card" (click)="navigateToSingleVideo()">
+        <div class="thumb-wrapper">
+          <img [src]="v.img" alt="video thumbnail" class="thumb-img" />
+          <div class="overlay d-flex flex-column align-items-center justify-content-center">
+            <mat-icon class="play-icon mb-2">play_circle_outline</mat-icon>
+            <h3 class="overlay-title">Exploring Beauty of Nature</h3>
+            <p class="overlay-desc">This video shows you the beauty of nature</p>
+          </div>
         </div>
-        <div class="thumbnailData">
-            <h3 style="font-size: 23px;">Exploring Beauty's of Nature</h3>
-            <mat-icon >play_circle_outline</mat-icon>
-            <h3 style="font-size: 17px;">This Video Show You The Beauty Of Nature</h3>
-        </div>
+      </mat-card>
     </div>
-
+  </div>
 </div>

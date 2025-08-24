@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginProfileService } from '../login-profile.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+type Entry = [string, any];
 
 @Component({
   selector: 'app-create-profile',
@@ -7,78 +9,107 @@ import { LoginProfileService } from '../login-profile.service';
   styleUrls: ['./create-profile.component.scss']
 })
 export class CreateProfileComponent implements OnInit {
+  form!: FormGroup;
 
-  profile:any=[
-    {name:'name', placeholder:'Enter your name', controlName:'name',type:'text',class:'grey'},
-    {name:'email', placeholder:'Select your parameters', controlName:'parameters',type:'select' ,
-      option:[
-        {count:'1' ,value:'one'},
-        {count:'2' ,value:'two'},
-        {count:'3' ,value:'thre'},
-        {count:'4' ,value:'four'},
-        {count:'5' ,value:'five'},
-        {count:'6' ,value:'six'},
-      ]
-    },
-    {name:'email', placeholder:'Select your services', controlName:'parameters',type:'select' ,class:'white',
-      option:[
-        {count:'Lite' ,value:'lite'},
-        {count:'Standard' ,value:'standard'},
-        {count:'Premium' ,value:'premium'},
-        {count:'Enterprises' ,value:'enterprises'},
-        {count:'Buisness Subsscription' ,value:'buisness'},
-        
-      ]
-    },
-    {name:'country', controlName:'file' ,type:'file',class:'grey'},
-    // {name:'password', placeholder:'Create your password', controlName:'password' ,type:'password',class:'white'},
-    // {name:'address', placeholder:'Enter your address', controlName:'address' ,type:'text',class:'grey'},
-  ]
+  // Options for selects (cleaned & strongly typed)
+  parametersOptions = [
+    { count: '1', value: 'one' },
+    { count: '2', value: 'two' },
+    { count: '3', value: 'three' },
+    { count: '4', value: 'four' },
+    { count: '5', value: 'five' },
+    { count: '6', value: 'six' },
+  ];
 
-  formData:any=[
-    {name:'name', placeholder:'Enter your name', controlName:'name',type:'text',class:'grey'},
-    {name:'email', placeholder:'Enter your email', controlName:'email',type:'email' ,class:'white'},
-    {name:'country', placeholder:'Enter your country', controlName:'country' ,type:'text',class:'grey'},
-    {name:'password', placeholder:'Create your password', controlName:'password' ,type:'password',class:'white'},
-    {name:'address', placeholder:'Enter your address', controlName:'address' ,type:'text',class:'grey'},
-  ]
+  serviceOptions = [
+    { count: 'Lite', value: 'lite' },
+    { count: 'Standard', value: 'standard' },
+    { count: 'Premium', value: 'premium' },
+    { count: 'Enterprises', value: 'enterprises' },
+    { count: 'Business Subscription', value: 'business' },
+  ];
 
-  // showLabel = [
-  //   { label: 'Name :'},
-  //   { label: 'Email :' },
-  //   { label: 'Country :' },
-  //   { label: 'Address :'  },
-  //   { label: 'Parameter :'},
-  //   { label: 'Service :' },
-  //   { label: 'Mobile :' }
-  // ];
+  // Preview data
+  storedData: any = null;
+  storedEntries: Entry[] = [];
+  selectedFileName = '';
 
-  receivedProfileData: any;
-  profileData: any;
-  storedData:any =null;
-  storedEntries: [string, unknown][];
+  constructor(private fb: FormBuilder) {}
 
-  constructor( private profileService :LoginProfileService) { }
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      parameters: ['', Validators.required],
+      service: ['', Validators.required],
+      country: [''],
+      file: [null], // will store file name (or file if you later upload)
+    });
 
-  ngOnInit() {
     this.loadProfileData();
-    
-    // this.profileService.updateProfileData('data')
   }
 
-  loadProfileData() {
-    this.storedData = localStorage.getItem('form');
-    if (this.storedData) {
-      this.storedData = JSON.parse(this.storedData); 
-      this.storedEntries =Object.entries(this.storedData);
-      console.log(this.storedEntries);
-      
-      console.log("Loaded Data:", this.storedData);
-      console.log("Loaded Data:", Object.keys(this.storedData));
-      console.log("Loaded Data:", Object.keys(this.storedData).forEach(key => {
-        console.log(`${key}:`, this.storedData[key]);
-      }));
-      
+  // Save to localStorage and refresh preview
+  save(): void {
+    if (this.form.invalid) return;
+
+    const raw = this.form.value;
+    const payload = {
+      name: raw.name,
+      parameters: raw.parameters,
+      service: raw.service,
+      country: raw.country,
+      file: this.selectedFileName || null,
+      savedAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem('form', JSON.stringify(payload));
+    this.loadProfileData();
+    this.form.markAsPristine();
+  }
+
+  reset(): void {
+    this.form.reset();
+    this.selectedFileName = '';
+  }
+
+  onFileChange(ev: Event): void {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.selectedFileName = file.name;
+      this.form.patchValue({ file: file.name });
+      this.form.markAsDirty();
+    }
+  }
+
+  loadProfileData(): void {
+    const stored = localStorage.getItem('form');
+    if (!stored) {
+      this.storedData = null;
+      this.storedEntries = [];
+      return;
+    }
+    this.storedData = JSON.parse(stored);
+    // Order keys nicely for preview
+    const order = ['name', 'parameters', 'service', 'country', 'file', 'savedAt'];
+    const entries: Entry[] = [];
+    for (const key of order) {
+      if (this.storedData[key] !== undefined && this.storedData[key] !== null && this.storedData[key] !== '') {
+        entries.push([key, this.storedData[key]]);
+      }
+    }
+    this.storedEntries = entries;
+  }
+
+  trackByEntry = (_: number, e: Entry) => e[0];
+
+  // Nicely label keys
+  labelize(key: string): string {
+    switch (key) {
+      case 'savedAt': return 'Saved At';
+      case 'file': return 'File';
+      default:
+        return key.charAt(0).toUpperCase() + key.slice(1);
     }
   }
 }

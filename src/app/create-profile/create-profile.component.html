@@ -1,77 +1,96 @@
+<div class="container my-4">
+  <div class="row g-4">
+    <!-- LEFT: Form -->
+    <div class="col-12 col-lg-6">
+      <mat-card class="card-soft p-4 dark-card">
+        <h1 class="h4 mb-1">Create Your Profile</h1>
+        <p class="text-muted mb-4">Let's start your wonderful journey with us</p>
 
-<div class="containerTwo">
-    <div class="left">
-        <div class="insidLeft">
-            <h1>Create Your Profile</h1>
-            <p>Let's start your wonderful journey with us</p>
-            
-            <div class="profileData" *ngFor="let data of profile">
-              
-                <input *ngIf="data.type === 'text' || data.type === 'file'" 
-                       [type]="data.type" 
-                       [placeholder]="data.placeholder" 
-                       class="form-control">
-                <mat-form-field *ngIf="data.type === 'select'" class="Select">
-                    <mat-label>{{ data.placeholder }}</mat-label>
-                    <mat-select>
-                        <mat-option *ngFor="let option of data.option" 
-                                    [value]="option.value">
-                            {{ option.count }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+        <form [formGroup]="form" (ngSubmit)="save()" class="d-grid gap-3">
+          <!-- Name -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Enter your name</mat-label>
+            <input matInput formControlName="name" placeholder="e.g., Rupal Tyagi" required />
+            <mat-error *ngIf="form.get('name')?.hasError('required')">Name is required</mat-error>
+          </mat-form-field>
 
-        </div>
+          <!-- Parameters (select) -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Select your parameters</mat-label>
+            <mat-select formControlName="parameters" required>
+              <mat-option *ngFor="let option of parametersOptions" [value]="option.value">
+                {{ option.count }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('parameters')?.hasError('required')">Please select a parameter</mat-error>
+          </mat-form-field>
+
+          <!-- Services (select) -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Select your services</mat-label>
+            <mat-select formControlName="service" required>
+              <mat-option *ngFor="let option of serviceOptions" [value]="option.value">
+                {{ option.count }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('service')?.hasError('required')">Please select a service</mat-error>
+          </mat-form-field>
+
+          <!-- Country -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Enter your country</mat-label>
+            <input matInput formControlName="country" placeholder="e.g., India" />
+          </mat-form-field>
+
+          <!-- File Upload -->
+          <div class="d-flex align-items-center gap-2">
+            <input #fileInput type="file" class="d-none" (change)="onFileChange($event)" />
+            <button type="button" mat-stroked-button (click)="fileInput.click()">
+              <mat-icon class="me-1">upload</mat-icon> Upload File
+            </button>
+            <span class="small text-truncate" style="max-width: 60%">
+              {{ selectedFileName || 'No file chosen' }}
+            </span>
+          </div>
+
+          <!-- Actions -->
+          <div class="d-flex gap-2 justify-content-end mt-2">
+            <button type="button" mat-stroked-button (click)="reset()">Reset</button>
+            <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid || form.pristine">
+              Save Profile
+            </button>
+          </div>
+        </form>
+      </mat-card>
     </div>
-    <div class="right">
-        <div class="insidRight" >
-        <div class="rightUp">
-            <div class="Image" style="height: 50%; width: 50%;">
-                <img height="100%" width="100%"   src="https://static.vecteezy.com/system/resources/previews/019/879/186/original/user-icon-on-transparent-background-free-png.png" alt="">
-            </div>
-            <div class="details">
-                <div>{{storedData.name}}</div>
-            </div>
-        </div>
-        
-            <div class="rightDown" >
-                    <div class="rightDownLeft " >
-                        <div  *ngIf="storedEntries.length > 0" class="insideRigghtDown">
-                            <div *ngFor="let entry of storedEntries"class="d-flex entryData" >
-                                <div>
-                                    <p>{{ entry[0] }}:</p>
-                                </div>
-                                <div>
 
-                                    <p>{{ entry[1] }}</p>
-                                </div>
-                              </div>
-                          
-
-                        </div>
-                        <!-- {{receivedProfileData.name}} -->
-                    </div>
-                    <!-- <div class="rightDownRight ">
-                        <div class="insideRightDown">
-                            <p> {{storedData.name}}</p>
-                           
-                          
-                            <p>{{storedData.email}}</p>
-                            <p>{{storedData.country}}</p>
-                            <p>{{storedData.address}}</p>
-
-                        </div>
-                    </div> -->
-                    <!-- <div *ngIf="storedEntries.length > 0">
-                        <h3>Stored Profile Data</h3>
-                        <div *ngFor="let entry of storedEntries" class="d-flex">
-                          <strong>{{ entry[0] }}:</strong> <p>{{ entry[1] }}</p>
-                        </div>
-                      </div> -->
-
-            </div>
+    <!-- RIGHT: Preview -->
+    <div class="col-12 col-lg-6">
+      <mat-card class="card-soft p-4 dark-card h-100">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="avatar rounded-circle d-flex align-items-center justify-content-center">
+            <span>{{ (storedData?.name || 'U') | slice:0:1 }}</span>
+          </div>
+          <div>
+            <div class="fw-semibold">{{ storedData?.name || 'Your Name' }}</div>
+            <div class="text-muted small">{{ storedData?.service || 'Selected Service' }}</div>
+          </div>
         </div>
 
+        <div *ngIf="storedEntries?.length; else emptyState" class="insideRightDown">
+          <div *ngFor="let e of storedEntries; trackBy: trackByEntry" class="d-flex entryData py-2">
+            <div class="text-muted me-2 fw-medium">{{ labelize(e[0]) }}:</div>
+            <div class="flex-grow-1 text-break">{{ e[1] }}</div>
+          </div>
+        </div>
+
+        <ng-template #emptyState>
+          <div class="text-center text-muted">
+            <mat-icon>info</mat-icon>
+            <div class="mt-2">No saved profile yet. Fill the form and click “Save Profile”.</div>
+          </div>
+        </ng-template>
+      </mat-card>
     </div>
+  </div>
 </div>

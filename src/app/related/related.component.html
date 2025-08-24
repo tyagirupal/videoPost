@@ -1,18 +1,46 @@
-<div class="body">
-    <div class="videoContainer">
-        <div class="singleVideo " *ngFor="let data of videoData">
-            <div class="left"> 
-                <img style="width: 100%; height: 100%;" [src]="data.img" alt="">
-            </div>
-            <div class="right"  >
-                <div class="title">{{data.dataOne}}</div>
-                <div class="description">{{data.dataTwo}}</div>
-                <div class="uploadedBy">{{data.dataThree}}</div>
-            </div>
-
-
-        </div>
-
+<div class="container my-3">
+  <mat-card class="card-soft p-0">
+    <div class="related-header px-3 py-2">
+      <span class="fw-semibold">Related Videos</span>
     </div>
 
+    <!-- Scrollable list -->
+    <div class="list-wrapper">
+      <div
+        class="video-item px-2 py-2"
+        *ngFor="let v of videoData; trackBy: trackByIdx"
+        (click)="open(v)"
+        role="button"
+        tabindex="0"
+      >
+        <div class="row g-3 align-items-start">
+          <!-- Thumbnail -->
+          <div class="col-5 col-md-4">
+            <div class="ratio ratio-16x9 thumb">
+              <img
+                [src]="v.img"
+                [alt]="v.dataOne"
+                class="w-100 h-100 object-fit-cover rounded"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+              />
+            </div>
+          </div>
+
+          <!-- Text -->
+          <div class="col-7 col-md-8 d-flex flex-column">
+            <div class="title text-truncate-2">
+              {{ v.dataOne }}
+            </div>
+            <div class="description text-muted small text-truncate-2 mt-1">
+              {{ v.dataTwo }}
+            </div>
+            <div class="uploadedBy text-muted small mt-1">
+              {{ v.dataThree }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
 </div>

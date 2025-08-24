@@ -1,50 +1,102 @@
-
-<div class="body">
-    <div class="container-fluid">
-        <div class="sidebar">
-            <div class="searchTop">
-                <input type="search" name="" id="">
-                <button>serach</button>
-            </div>
-            <div class="filters">
-                <div class="singleFilter" *ngFor="let data of filterData">
-                    <div class="heading">
-                        {{data.heading}}
-                    </div>
-                    <div class="filtersGroup" *ngFor="let inside of data.checkdata">
-                        <div class="formGroup">
-                            <label>{{inside.label}}</label>
-                            <mat-checkbox style="border-color: white;"></mat-checkbox>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div class="right">
-            <div class="topFilters">
-                <div class="AppliedFilters" *ngFor="let data of filterNav">
-                    <div class="filterHeading">{{data.head}}</div>
-                    <div class="selectedFilters">
-                        <mat-chip>One </mat-chip>
-                    </div>
-
-                </div>
-
-
-            </div>
-            <div class="newFilterButtons">
-                <div class="newButton">Latest</div>
-                <div class="selectedNewButton">Popular</div>
-                <div class="newButton">Trending</div>
-
-            </div>
-            <div class="rightContent">
-                <app-videos></app-videos>
-            </div>
-
-        </div>
-
+<mat-sidenav-container class="rc-shell">
+  <!-- Filters drawer (mobile & desktop) -->
+  <mat-sidenav #drawer mode="over" [autoFocus]="false" class="rc-drawer">
+    <div class="d-flex align-items-center justify-content-between p-3">
+      <div class="fw-semibold">Filters</div>
+      <button mat-icon-button (click)="drawer.close()" aria-label="Close filters">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
 
-</div>
+    <!-- Search -->
+    <div class="px-3 pb-2">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Search</mat-label>
+        <input matInput placeholder="Type to search…" [formControl]="searchCtrl" />
+        <button mat-icon-button matSuffix *ngIf="searchCtrl.value" (click)="searchCtrl.reset()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Filter groups -->
+    <div class="px-3 pb-3 rc-groups">
+      <div class="rc-group" *ngFor="let group of filterData">
+        <div class="rc-group-title">{{ group.heading }}</div>
+        <div class="d-flex flex-column gap-1">
+          <label class="d-flex align-items-center justify-content-between rc-check"
+                 *ngFor="let it of group.checkdata">
+            <span>{{ it.label }}</span>
+            <mat-checkbox
+              [checked]="isSelected(group.key, it.label)"
+              (change)="toggle(group.key, it.label)"
+            ></mat-checkbox>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-3 pb-3 d-grid gap-2">
+      <button mat-stroked-button color="primary" (click)="clearAll()">Clear all</button>
+      <button mat-flat-button color="primary" (click)="drawer.close()">Apply</button>
+    </div>
+  </mat-sidenav>
+
+  <!-- Main content -->
+  <mat-sidenav-content>
+    <!-- Top bar -->
+    <div class="rc-topbar">
+      <div class="container-fluid d-flex align-items-center gap-2">
+        <!-- Filters button (visible on all screens; handy on mobile) -->
+        <button mat-stroked-button class="me-2" (click)="drawer.open()">
+          <mat-icon class="me-1">tune</mat-icon> Filters
+        </button>
+
+        <!-- Applied filter chips -->
+        <div class="rc-chips d-flex flex-wrap align-items-center gap-2">
+          <ng-container *ngIf="appliedFilters.length; else noFilters">
+            <mat-chip-list>
+              <mat-chip
+                *ngFor="let chip of appliedFilters; trackBy: trackByChip"
+                (removed)="removeChip(chip)"
+                removable
+              >
+                {{ chip.keyLabel }}: {{ chip.value }}
+                <button matChipRemove aria-label="Remove filter">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-list>
+          </ng-container>
+          <ng-template #noFilters>
+            <span class="text-muted small">No filters applied</span>
+          </ng-template>
+        </div>
+
+        <span class="ms-auto"></span>
+
+        <!-- Sort buttons -->
+        <mat-button-toggle-group
+          [value]="sort"
+          (change)="sort = $event.value"
+          class="rc-sort"
+          name="sort"
+          aria-label="Sort"
+        >
+          <mat-button-toggle value="Latest">Latest</mat-button-toggle>
+          <mat-button-toggle value="Popular">Popular</mat-button-toggle>
+          <mat-button-toggle value="Trending">Trending</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container-fluid rc-content">
+      <mat-card class="p-2 p-md-3 card-soft">
+        <!-- Your existing videos component -->
+        <app-videos></app-videos>
+      </mat-card>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

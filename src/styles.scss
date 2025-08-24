@@ -10,3 +10,69 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     background-color: red;
     color: white;
 }
+
+ .mat-form-field-appearance-outline .mat-form-field-flex {
+    padding: 0 .75em 0 .75em;
+    margin-top: -0.25em;
+    position: relative;
+    border: 1px solid white;
+}
+.mat-mdc-input-element::placeholder {
+  color: #ffffff !important;   /* pure white */
+  opacity: 1 !important;       /* remove transparency */
+}
+
+/* ===== GLOBAL FIX FOR ANGULAR MATERIAL OUTLINED FIELDS ON DARK BACKGROUND ===== */
+
+/* White text + placeholder */
+.dark-field .mat-mdc-input-element {
+  color: #ffffff !important;
+}
+.dark-field .mat-mdc-input-element::placeholder {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Label color (resting + floating) */
+.dark-field .mdc-floating-label,
+.dark-field .mdc-floating-label--float-above {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Always show WHITE outline (idle/hover) */
+.dark-field .mdc-text-field--outlined .mdc-notched-outline__leading,
+.dark-field .mdc-text-field--outlined .mdc-notched-outline__notch,
+.dark-field .mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-color: #ffffff !important;
+}
+
+/* Focus = AQUA outline */
+.dark-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__leading,
+.dark-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__notch,
+.dark-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__trailing {
+  border-color: #56e3d4 !important;
+}
+
+/* Invalid = RED outline (keeps error visible) */
+.dark-field .mdc-text-field--invalid .mdc-notched-outline__leading,
+.dark-field .mdc-text-field--invalid .mdc-notched-outline__notch,
+.dark-field .mdc-text-field--invalid .mdc-notched-outline__trailing {
+  border-color: #ff5c5c !important;
+}
+
+/* Error text color */
+.dark-field .mat-mdc-form-field-error {
+  color: #ff5c5c !important;
+}
+
+/* Checkbox on dark */
+.dark-checkbox .mdc-form-field {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+.dark-checkbox .mdc-checkbox__background {
+  border-color: rgba(255, 255, 255, 0.85) !important;
+}
+.dark-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
+  background-color: #56e3d4 !important;
+  border-color: #56e3d4 !important;
+}

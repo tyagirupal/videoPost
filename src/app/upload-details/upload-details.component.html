@@ -1,83 +1,124 @@
+<div class="ud-shell">
+  <!-- STEP 1: Upload (when not yet uploaded) -->
+  <div *ngIf="!uploaded" class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8">
+        <mat-card class="card-soft p-4 text-center">
+          <h1 class="h4 mb-2 text-white">Upload your video</h1>
+          <p class="text-muted mb-4">Click to choose a file or drag & drop here</p>
 
-<div>
-    <div id="top" *ngIf="!uploaded">
-        <div class="body">
-            <div class="outerCircle">
-                <div class="uploadCircle" id="uploadCircle">
-                    <div class="uploadText">
-                        <div style="font-size: 24px;">
-                            Click to upload your video <br> OR <br> Drag & Drop your video files here to upload
-                        </div>
-                    </div>
-                    <input type="file" accept="video/mp4,video/mov" (change)="captureThumbnails($event)">
-                </div>
+          <!-- Dropzone -->
+          <div
+            class="dropzone mx-auto"
+            [class.dropzone--active]="isDragging"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+          >
+            <div class="dz-inner">
+              <mat-icon class="dz-icon">cloud_upload</mat-icon>
+              <div class="dz-text">
+                <div class="fw-semibold">Drag & drop your video</div>
+                <div class="text-muted small">MP4 or MOV • up to {{ maxSizeMB }} MB</div>
+              </div>
+
+              <button mat-stroked-button color="primary" class="mt-3" (click)="fileInput.click()">
+                Choose file
+              </button>
+
+              <input
+                #fileInput
+                type="file"
+                accept="video/mp4,video/quicktime"
+                class="d-none"
+                (change)="captureThumbnails($event)"
+              />
             </div>
-        </div>
+          </div>
+
+          <div *ngIf="errorMsg" class="alert alert-danger mt-3 py-2">{{ errorMsg }}</div>
+        </mat-card>
+      </div>
     </div>
-    
-    
-    <div id="down" *ngIf="uploaded">
-        <!-- <div class="Upload">
-            <div class="insideUpload">
-                <div class="left">
-                    <div class="leftLeft">
-                            <video *ngIf="base64Video" [attr.src]="base64Video" controls  width="400"></video>
+  </div>
 
-                            
-                    </div>
-                </div>
-                <div class="Right">
-                    <div class="videoData">
-                        <form [formGroup]="formGroup">
-                            <div class="formGroup" *ngFor="let data of formGroupData">
-                                <label>{{ data.label }}</label>
-                                <input [type]="data.type" [placeholder]="data.placeholder">
-                            </div>
-    
-                            <h3>Generated Thumbnails</h3>
-                            <div *ngIf="thumbnails.length > 0" style="display: flex; gap: 10px;">
-                                <img *ngFor="let thumb of thumbnails" [src]="thumb" style="width: 150px; height: 100px;" />
-                            </div>
-                        </form>
-                        <button (click)="submit()">Submit</button>
-                    </div>
-                </div>
+  <!-- STEP 2: Details (after upload) -->
+  <div *ngIf="uploaded" class="container my-4">
+    <div class="row g-3">
+      <!-- LEFT: Video preview -->
+      <div class="col-12 col-lg-6">
+        <mat-card class="card-soft p-0">
+          <div class="ratio ratio-16x9">
+            <video class="w-100 h-100 object-fit-cover" *ngIf="base64Video" [attr.src]="base64Video" controls></video>
+          </div>
+
+          <!-- Quick meta (optional) -->
+          <div class="p-3 d-flex flex-wrap align-items-center gap-2">
+            <span class="badge text-bg-light">
+              <mat-icon class="me-1">movie</mat-icon>{{ fileName || 'video.mp4' }}
+            </span>
+            <span class="badge text-bg-light">{{ fileSizeMB }} MB</span>
+          </div>
+        </mat-card>
+      </div>
+
+      <!-- RIGHT: Form + thumbnails -->
+      <div class="col-12 col-lg-6">
+        <mat-card class="card-soft p-3">
+          <form [formGroup]="formGroup" (ngSubmit)="submit()" class="d-grid gap-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Enter Title of video</mat-label>
+              <input matInput formControlName="title" placeholder="Enter video title here" required />
+              <mat-error *ngIf="formGroup.get('title')?.hasError('required')">Title is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Enter Description of video</mat-label>
+              <textarea
+                matInput
+                formControlName="description"
+                placeholder="Enter video description here"
+                rows="4"
+              ></textarea>
+            </mat-form-field>
+
+            <div>
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <h3 class="h6 m-0">Generated Thumbnails</h3>
+                <button type="button" mat-stroked-button (click)="regenerateThumbs()" [disabled]="!videoUrl">
+                  <mat-icon class="me-1">refresh</mat-icon> Regenerate
+                </button>
+              </div>
+
+              <div *ngIf="thumbnails.length; else noThumbs" class="thumb-grid">
+                <button
+                  type="button"
+                  class="thumb-card"
+                  *ngFor="let t of thumbnails; trackBy: trackBySrc"
+                  [class.thumb-card--active]="t === selectedThumb"
+                  (click)="selectThumb(t)"
+                >
+                  <img [src]="t" alt="thumbnail" class="w-100 h-100 object-fit-cover rounded" />
+                  <span class="check">
+                    <mat-icon>check_circle</mat-icon>
+                  </span>
+                </button>
+              </div>
+
+              <ng-template #noThumbs>
+                <div class="text-muted small">No thumbnails generated yet.</div>
+              </ng-template>
             </div>
-        </div> -->
 
-        <div class="body">
-            <div class="container">
-                <div class="left">
-                    <div class="videoContainer">
-                        <video style="height: 100%; width: 100%;" *ngIf="base64Video" [attr.src]="base64Video" controls  width="400"></video>
-                    </div>
-
-                </div>
-                <div class="right">
-                    <div class="VideoData">
-                        <form [formGroup]="formGroup">
-                            <div class="formGroup" *ngFor="let data of formGroupData">
-                                <label>{{ data.label }}</label>
-                                <input [type]="data.type" [placeholder]="data.placeholder">
-                            </div>
-    
-                            <h3>Generated Thumbnails</h3>
-                            <div *ngIf="thumbnails.length > 0" class="thumbnailsData">
-                                <img *ngFor="let thumb of thumbnails" [src]="thumb" style="width: 150px; height: 100px;" />
-                            </div>
-                        </form>
-
-
-                    </div>
-
-                </div>
-
+            <div class="d-flex justify-content-end gap-2 mt-2">
+              <button type="button" mat-stroked-button color="primary" (click)="resetAll()">Upload another</button>
+              <button type="submit" mat-flat-button color="primary" [disabled]="formGroup.invalid">
+                Save & Continue
+              </button>
             </div>
-
-
-        </div>
-
+          </form>
+        </mat-card>
+      </div>
     </div>
-
+  </div>
 </div>
-

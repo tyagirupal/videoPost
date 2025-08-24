@@ -1,40 +1,59 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid" style="gap: 38%; " >
-      <div class="insideContainer">
-          <a style="color: white;" class="navbar-brand" href="#">Welcome</a>
-          <button class="buttonShow"(click)="showNav()"type="button" >
-              <!-- <span class="navbar-toggler-icon"></span> -->
-              <mat-icon style="color: white;">view_headline</mat-icon>
-          </button>
-      </div>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup" style="font-size: 16px; font-weight: 500;" >
-        <ng-container *ngFor="let data of navData">
-          <!-- <div class="navbar-nav"  (click)="navigateToCart(data.link)" >
-            <a style="color: white;" class="nav-link active"  aria-current="page">{{data.data}}</a>
-          </div> -->
-          <div class="navbar-nav"  (click)="data.data == 'Log Out' ? logout() : navigateToCart(data.link)" *ngIf="data.isLoggedIn">
-            <a style="color: white;" class="nav-link active"  aria-current="page">{{data.data}}</a>
-          </div>
-
-        </ng-container>
-        <!-- <div (click)="logout()">
-          <button  style="border-radius: 50%; border: none;padding: 1%;">Log Out</button>
-        </div> -->
-      </div>
+<mat-sidenav-container class="nav-shell">
+  <!-- Mobile drawer -->
+  <mat-sidenav #drawer mode="over" [autoFocus]="false" class="nav-drawer p-3">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <span class="fs-5 fw-semibold">Menu</span>
+      <button mat-icon-button (click)="drawer.close()" aria-label="Close menu">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
-</nav>
-<!-- <div style="display: flex; width: 100%; justify-content: space-between;">
-  <a style="color: white;" class="navbar-brand" href="#">Welcome</a>
-    <mat-icon style="color: white;">view_headline</mat-icon>
-  
-</div> -->
 
-<div class="  sideDiv" id="navbarNavAltMarkup" *ngIf="show">
-  <mat-icon (click)="hideNav()" style="color: white; cursor: pointer; display: flex; flex-direction: row-reverse; width: 100%;">clear</mat-icon>
-  <div class="navbar-nav" *ngFor="let data of navData" (click)="navigateToCart(data.link)" style="font-size: 19px; font-weight: 500;">
-    <a style="color: white;" class="nav-link active"  aria-current="page">{{data.data}}</a>
-  </div>
-  <div (click)="logout()" style="position: relative; top: 30%;">
-    <button  style=" background-color: none; border: none;padding: 1%;">Log Out</button>
-  </div>
-</div>
+    <nav class="nav flex-column">
+      <a
+        *ngFor="let item of navData; trackBy: trackByLabel"
+        class="nav-link py-2"
+        [class.disabled]="!item.isLoggedIn"
+        (click)="item.data === 'Log Out' ? logout() : navigateTo(item.link); drawer.close()"
+        [attr.aria-disabled]="!item.isLoggedIn"
+        tabindex="0"
+      >
+        {{ item.data }}
+      </a>
+    </nav>
+
+    <div class="mt-4">
+      <button mat-stroked-button color="primary" class="w-100" (click)="logout()" *ngIf="!isLoginVisible()">
+        Log Out
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <!-- Top bar -->
+  <mat-sidenav-content>
+    <mat-toolbar class="app-navbar" color="primary">
+      <!-- Mobile menu button -->
+      <button mat-icon-button class="d-lg-none me-2" (click)="drawer.open()" aria-label="Open menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <!-- Brand -->
+      <a class="navbar-brand text-decoration-none text-white fw-semibold me-3" routerLink="/">Welcome</a>
+
+      <span class="ms-auto"></span>
+
+      <!-- Desktop links -->
+      <nav class="d-none d-lg-flex align-items-center gap-3">
+        <a
+          *ngFor="let item of navData; trackBy: trackByLabel"
+          class="nav-link-desktop"
+          [class.disabled]="!item.isLoggedIn"
+          (click)="item.data === 'Log Out' ? logout() : navigateTo(item.link)"
+          [attr.aria-disabled]="!item.isLoggedIn"
+          tabindex="0"
+        >
+          {{ item.data }}
+        </a>
+      </nav>
+    </mat-toolbar>
+  </mat-sidenav-content>
+</mat-sidenav-container>

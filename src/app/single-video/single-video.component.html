@@ -1,22 +1,47 @@
-
-<div class="Container">
-    <div class="leftSide">
-        <div class="mainVideo">
-            <video style="height: 100%; width: 100%;;" src="../../assets/y2mate.com - Shadow  Singga  Official Video   Sukh Sanghera  MixSingh  Latest Punjabi Songs_v720P.mp4"></video>
-            <div class="videoSection">
-                    <div class="like" *ngFor="let data of likeData">
-                        <div class="viewCount" >
-                            {{data.like}}
-                        </div>
-                    </div>
-            </div>
+<div class="container-fluid my-3">
+  <div class="row g-3">
+    <!-- LEFT: Video + actions + comments -->
+    <div class="col-12 col-lg-8">
+      <mat-card class="card-soft mb-3 p-0">
+        <!-- Responsive 16:9 video -->
+        <div class="ratio ratio-16x9">
+          <video
+            class="w-100 h-100 object-fit-cover"
+            [attr.poster]="poster"
+            controls
+          >
+            <source src="../../assets/y2mate.com - Shadow  Singga  Official Video   Sukh Sanghera  MixSingh  Latest Punjabi Songs_v720P.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
-        <div class="commentSection">
-            <app-comment></app-comment>
+
+        <!-- Actions / meta -->
+        <div class="d-flex flex-wrap align-items-center gap-2 gap-md-3 p-3 video-actions">
+          <div class="badge rounded-pill text-bg-light px-3 py-2 d-flex align-items-center gap-2" *ngFor="let m of likeData; trackBy: trackByText">
+            <mat-icon>insights</mat-icon>
+            <span class="fw-medium">{{ m.like }}</span>
+          </div>
+
+          <span class="ms-auto"></span>
+
+          <button mat-stroked-button class="d-flex align-items-center gap-2">
+            <mat-icon>share</mat-icon> Share
+          </button>
+          <button mat-stroked-button class="d-flex align-items-center gap-2">
+            <mat-icon>playlist_add</mat-icon> Save
+          </button>
         </div>
-    </div>
-    <div class="rightSide">
-        <app-related></app-related>
+      </mat-card>
+
+      <!-- Comments -->
+      <mat-card class="card-soft p-3">
+        <app-comment></app-comment>
+      </mat-card>
     </div>
 
+    <!-- RIGHT: Related -->
+    <div class="col-12 col-lg-4">
+      <app-related></app-related>
+    </div>
+  </div>
 </div>

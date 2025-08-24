@@ -1,6 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup ,FormControl} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginProfileService } from '../login-profile.service';
+
+interface CommentItem {
+  id?: string | number;
+  name: string;
+  userName: string;
+  comment: string;
+  createdAt?: string | Date;
+}
 
 @Component({
   selector: 'app-comment',
@@ -9,68 +17,62 @@ import { LoginProfileService } from '../login-profile.service';
 })
 export class CommentComponent implements OnInit {
 
-  inputValue:string;
-  disables:boolean;
+  form!: FormGroup;
+  isCommentBoxActive = false;
+  comments: CommentItem[] = [];
 
-  circle=[
-    {data:'R'},
-    {data:'U'},
-    {data:'P'},
-    {data:'A'},
-    {data:'L'},
-  ]
-
-data;
- formGroup:FormGroup;
-  isCommentBoxActive =false;
-
-  constructor(private fb:FormBuilder, private service :LoginProfileService) { }
+  constructor(
+    private fb: FormBuilder,
+    private service: LoginProfileService
+  ) {}
 
   ngOnInit(): void {
-    this.formGroup = this.fb.group({
-      Comment : new FormControl('')
-    })
-    this.getData();
+    this.form = this.fb.group({
+      // NOTE: use lowercase 'comment' to match TS access and validation
+      comment: ['', [Validators.required, Validators.maxLength(500)]]
+    });
+    this.loadComments();
   }
 
-  activeCommentBox(){
-    this.isCommentBoxActive =true;
+  private loadComments(): void {
+    this.service.getComment().subscribe((result: any[]) => {
+      // Normalize API -> CommentItem and reverse once here (not in template)
+      const mapped = (result || []).map((r: any, i: number) => ({
+        id: r.id ?? i,
+        name: r.name ?? 'R',
+        userName: r.userName ?? 'random',
+        comment: r.Comment ?? r.comment ?? '',
+        createdAt: r.createdAt ?? new Date()
+      })) as CommentItem[];
+
+      this.comments = mapped.slice().reverse();
+    });
   }
 
-  cancel(){
-    this.isCommentBoxActive =false;
+  cancel(): void {
+    this.isCommentBoxActive = false;
+    this.form.reset();
   }
 
-  getData (){
-    this.service.getComment().subscribe((result)=>{
-     this.data = result;
-    })
+  submit(): void {
+    if (this.form.invalid) return;
+
+    const params = {
+      name: 'R',
+      userName: 'random',
+      comment: this.form.value.comment,
+      createdAt: new Date().toISOString()
+    };
+
+    // If your backend expects 'Comment' (capital C), send both keys:
+    const payload = { ...params, Comment: params.comment };
+
+    this.service.postData(payload).subscribe(() => {
+      this.loadComments();
+      this.form.reset();
+      this.isCommentBoxActive = false;
+    });
   }
 
-  pushData(data:any){
-    console.log(this.formGroup.value);
-    const params = this.formGroup.value;
-    if (!this.formGroup.get('comment')?.value) {
-      this.disables = true;
-    } else {
-      this.disables = false;
-    }
-    const dataObj={
-       name:"R",
-       userName:"random",
-       ...params
-    }
-      console.log(dataObj);
-      
-    
-    this.service.postData(dataObj).subscribe((res)=>{
-      console.log(res);
-      this.getData();
-    })
-  }
-
-
-
-
-
+  trackById = (_: number, item: CommentItem) => item.id ?? item.comment;
 }
